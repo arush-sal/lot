@@ -1,10 +1,13 @@
 default: binary
 
-.PHONY: clean show-fmt fmt binary static install
+.PHONY: clean show-fmt fmt binary static-binary install
 
 BUILD_DIR := $(shell echo `pwd`/build)
 BUILD_FLAGS := -ldflags "-linkmode external -extldflags -static"
 GO_ENVIRONMENT := GOBIN=$(BUILD_DIR) GOCACHE=$(BUILD_DIR)/.cache GOGC=200
+
+export-gomodules-on: 
+	export GO111MODULE=on
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)/bin
@@ -12,13 +15,13 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)/src
 	chmod a+rwx $(BUILD_DIR)
 
-install: 
+install: export-gomodules-on
 	go install `go list -f '{{.Dir}}' `
 
-binary: 
+binary: export-gomodules-on
 	$(GO_ENVIRONMENT) go build `go list -f '{{.Dir}}' `
 
-static-binary: 
+static-binary: export-gomodules-on
 	$(GO_ENVIRONMENT) go build $(BUILD_FLAGS) `go list -f '{{.Dir}}' `
 
 vet:
