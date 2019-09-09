@@ -6,8 +6,7 @@ BUILD_DIR := $(shell echo `pwd`/build)
 BUILD_FLAGS := -ldflags "-linkmode external -extldflags -static"
 GO_ENVIRONMENT := GOBIN=$(BUILD_DIR) GOCACHE=$(BUILD_DIR)/.cache GOGC=200
 
-export-gomodules-on: 
-	export GO111MODULE=on
+export GO111MODULE=on
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)/bin
@@ -15,13 +14,13 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)/src
 	chmod a+rwx $(BUILD_DIR)
 
-install: export-gomodules-on
+install: 
 	go install `go list -f '{{.Dir}}' `
 
-binary: export-gomodules-on
+binary: 
 	$(GO_ENVIRONMENT) go build `go list -f '{{.Dir}}' `
 
-static-binary: export-gomodules-on
+static-binary: 
 	$(GO_ENVIRONMENT) go build $(BUILD_FLAGS) `go list -f '{{.Dir}}' `
 
 vet:
