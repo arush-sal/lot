@@ -1,6 +1,6 @@
 default: binary
 
-.PHONY: clean show-fmt fmt binary static-binary install
+.PHONY: clean show-fmt fmt binary static-binary install release-test release
 
 BUILD_DIR := $(shell echo `pwd`/build)
 BUILD_FLAGS := -ldflags "-linkmode external -extldflags -static"
@@ -38,6 +38,12 @@ show-fmt:
 
 check-fmt:
 	$(GO_ENVIRONMENT) gofmt -d `go list -f '{{.Dir}}'` 2>&1 | read foo ; [ $$? -eq 1 ]
+
+release-test:
+	goreleaser release --skip-publish --snapshot --rm-dist
+
+release:
+	goreleaser release --snapshot --rm-dist
 
 clean:
 	rm -rf $(BUILD_DIR)

@@ -1,0 +1,31 @@
+project_name: lot
+before:
+  hooks:
+  - go mod tidy
+builds:
+- id: lot
+  binary: lot
+  main: main.go
+  ldflags: &ldflags
+  - -s -w
+  env: &env
+  - GO111MODULE=on
+  - CGO_ENABLED=0
+  - GO_EXTLINK_ENABLED=0
+  goos:
+  - darwin
+  - linux
+  goarch: &goarch
+  - amd64
+
+snapshot:
+  name_template: '{{ .Tag }}'
+checksum:
+  name_template: 'checksums.txt'
+changelog:
+  sort: asc
+  filters:
+    exclude:
+    - '^docs:'
+    - '^test:'
+
