@@ -13,11 +13,17 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package utils
+
+package util
 
 import (
 	"fmt"
 	"os"
+)
+
+const (
+	// ProcLocation is the default location for the proc folder
+	ProcLocation = "/proc"
 )
 
 // ErrorCheck will print and exit if the error passed is not empty
@@ -26,4 +32,13 @@ func ErrorCheck(err error) {
 		fmt.Fprint(os.Stderr, err)
 		os.Exit(1)
 	}
+}
+
+// CreateProcPath returns a proc location build from the arguments passed
+func CreateProcPath(args ...string) string {
+	var procPath string
+	for _, str := range args {
+		procPath = procPath + "/" + str
+	}
+	return procPath
 }
