@@ -16,6 +16,9 @@ limitations under the License.
 package cmd
 
 import (
+	"fmt"
+	"github.com/arush-sal/lot/pkg/netutils"
+
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +28,8 @@ var traceCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		fmt.Println("In network trace")
+		netutils.Trace(args[0])
 	},
 }
 

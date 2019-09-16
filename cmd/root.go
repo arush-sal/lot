@@ -17,10 +17,14 @@ package cmd
 
 import (
 	// "fmt"
+	"fmt"
 	"os"
+	"os/user"
+
 	// "os/user"
 
 	// "github.com/arush-sal/lot/pkg/utils"
+	"github.com/arush-sal/lot/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
@@ -43,12 +47,12 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	// usr, err := user.Current()
-	// utils.ErrorCheck(err)
+	usr, err := user.Current()
+	utils.ErrorCheck(err)
 
-	// if usr.Uid != "0" {
-	// 	utils.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
-	// }
+	if usr.Uid != "0" {
+		utils.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
+	}
 
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
