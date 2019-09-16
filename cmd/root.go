@@ -21,15 +21,11 @@ import (
 	"os"
 	"os/user"
 
-	// "os/user"
-
-	// "github.com/arush-sal/lot/pkg/utils"
-	"github.com/arush-sal/lot/pkg/utils"
+	"github.com/arush-sal/lot/pkg/util"
 	"github.com/spf13/cobra"
 )
 
 var (
-	interactive bool
 	environment string
 )
 
@@ -40,7 +36,7 @@ var rootCmd = &cobra.Command{
 	Version: "v0.0.1",
 	Long:    ``,
 	// Run: func(cmd *cobra.Command, args []string) {
-	// 	allCmd.Execute()
+
 	// },
 }
 
@@ -48,10 +44,10 @@ var rootCmd = &cobra.Command{
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	usr, err := user.Current()
-	utils.ErrorCheck(err)
+	util.ErrorCheck(err)
 
 	if usr.Uid != "0" {
-		utils.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
+		util.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
 	}
 
 	if err := rootCmd.Execute(); err != nil {
@@ -61,7 +57,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().BoolVarP(&interactive, "interactive", "i", false, "start an interactive shell")
 	rootCmd.PersistentFlags().StringVarP(&environment, "env", "", "host", "environment in which lot is executed\nvalid options: k8s, container, swarm, host")
 }
 

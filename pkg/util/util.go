@@ -13,11 +13,18 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-package utils
+
+package util
 
 import (
 	"fmt"
 	"os"
+	"strconv"
+)
+
+const (
+	// ProcLocation is the default location for the proc folder
+	ProcLocation = "/proc"
 )
 
 // ErrorCheck will print and exit if the error passed is not empty
@@ -25,5 +32,28 @@ func ErrorCheck(err error) {
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
+	}
+}
+
+// CreateProcPath returns a proc location build from the arguments passed
+func CreateProcPath(args ...string) string {
+	var procPath string
+	for _, str := range args {
+		procPath = procPath + "/" + str
+	}
+	return procPath
+}
+
+// TransformSize takes bytes in int64 format and returns it in a human readable format
+func TransformSize(n int64) string {
+	switch {
+	case n < 1024:
+		return strconv.FormatInt(n, 10) + "B"
+	case n < 1048576 && n > 1024:
+		n = n / 1024
+		return strconv.FormatInt(n, 10) + "kB"
+	default:
+		n = (n / 1024) / 1024
+		return strconv.FormatInt(n, 10) + "mB"
 	}
 }

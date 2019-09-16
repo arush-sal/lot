@@ -19,17 +19,20 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var interactive bool
+
 // processCmd represents the process command
 var processCmd = &cobra.Command{
 	Use:   "process",
 	Short: "",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
+	// Run: func(cmd *cobra.Command, args []string) {
 
-	},
+	// },
 }
 
 func init() {
+	processCmd.Flags().BoolVarP(&interactive, "interactive", "i", false, "start an interactive shell")
 	rootCmd.AddCommand(processCmd)
 
 }
