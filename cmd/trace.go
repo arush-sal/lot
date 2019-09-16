@@ -16,7 +16,6 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
 	"github.com/arush-sal/lot/pkg/netutils"
 
 	"github.com/spf13/cobra"
