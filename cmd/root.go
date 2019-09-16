@@ -20,12 +20,10 @@ import (
 	"os"
 	// "os/user"
 
-	// "github.com/arush-sal/lot/pkg/utils"
 	"github.com/spf13/cobra"
 )
 
 var (
-	interactive bool
 	environment string
 )
 
@@ -36,7 +34,7 @@ var rootCmd = &cobra.Command{
 	Version: "v0.0.1",
 	Long:    ``,
 	// Run: func(cmd *cobra.Command, args []string) {
-	// 	allCmd.Execute()
+
 	// },
 }
 
@@ -57,7 +55,6 @@ func Execute() {
 
 func init() {
 	cobra.OnInitialize(initConfig)
-	rootCmd.PersistentFlags().BoolVarP(&interactive, "interactive", "i", false, "start an interactive shell")
 	rootCmd.PersistentFlags().StringVarP(&environment, "env", "", "host", "environment in which lot is executed\nvalid options: k8s, container, swarm, host")
 }
 
