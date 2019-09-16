@@ -24,9 +24,9 @@ var networkCmd = &cobra.Command{
 	Use:   "network",
 	Short: "",
 	Long:  ``,
-	Run: func(cmd *cobra.Command, args []string) {
+	// Run: func(cmd *cobra.Command, args []string) {
 
-	},
+	// },
 }
 
 func init() {

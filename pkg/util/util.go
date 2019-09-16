@@ -30,7 +30,7 @@ const (
 // ErrorCheck will print and exit if the error passed is not empty
 func ErrorCheck(err error) {
 	if err != nil {
-		fmt.Fprint(os.Stderr, err)
+		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
 }
