@@ -99,9 +99,7 @@ func (p *Process) GetStat(pid string) (err error) {
 	var rsslim uint64
 
 	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, pid, "stat"))
-	if err != nil {
-		return err
-	}
+	util.ErrorCheck(err)
 	defer stats.Close()
 
 	scanner := bufio.NewScanner(stats)
@@ -127,9 +125,7 @@ func (p *Process) GetStat(pid string) (err error) {
 	}
 
 	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, pid, "cmdline"))
-	if err != nil {
-		return err
-	}
+	util.ErrorCheck(err)
 	defer cmdline.Close()
 
 	cmdScanner := bufio.NewScanner(cmdline)
@@ -196,7 +192,8 @@ func (p *Process) GetStat(pid string) (err error) {
 	return nil
 }
 
-func getPids() (pids []string, err error) {
+// GetPids returns a slice of IDs for all of the currently running processes
+func GetPids() (pids []string, err error) {
 	p, err := os.Open(util.ProcLocation)
 	if err != nil {
 		return nil, err
@@ -232,7 +229,7 @@ func getPids() (pids []string, err error) {
 
 // GetProcessStats returns a list of processes with their respective info
 func GetProcessStats() ([]*Process, error) {
-	pids, err := getPids()
+	pids, err := GetPids()
 	var p = make([]*Process, 0)
 	if err != nil {
 		return nil, err
@@ -278,7 +275,7 @@ func ListProcess() error {
 		memp, err := proc.MemoryPercent()
 		util.ErrorCheck(err)
 
-		fmt.Fprintf(tw, psformat, username, p.Pid, cpup, memp, transformSize(int64(stat.Vsize)), transformSize(stat.Rss), terminal, stat.State, processStartTime, cput, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, psformat, username, p.Pid, cpup, memp, util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), terminal, stat.State, processStartTime, cput, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 
@@ -305,17 +302,4 @@ func startTime(t int64) string {
 	}
 
 	return sts.Format("15:04")
-}
-
-func transformSize(n int64) string {
-	switch {
-	case n < 1024:
-		return strconv.FormatInt(n, 10) + "B"
-	case n < 1048576 && n > 1024:
-		n = n / 1024
-		return strconv.FormatInt(n, 10) + "kB"
-	default:
-		n = (n / 1024) / 1024
-		return strconv.FormatInt(n, 10) + "mB"
-	}
 }

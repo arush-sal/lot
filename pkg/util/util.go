@@ -19,6 +19,7 @@ package util
 import (
 	"fmt"
 	"os"
+	"strconv"
 )
 
 const (
@@ -41,4 +42,18 @@ func CreateProcPath(args ...string) string {
 		procPath = procPath + "/" + str
 	}
 	return procPath
+}
+
+// TransformSize takes bytes in int64 format and returns it in a human readable format
+func TransformSize(n int64) string {
+	switch {
+	case n < 1024:
+		return strconv.FormatInt(n, 10) + "B"
+	case n < 1048576 && n > 1024:
+		n = n / 1024
+		return strconv.FormatInt(n, 10) + "kB"
+	default:
+		n = (n / 1024) / 1024
+		return strconv.FormatInt(n, 10) + "mB"
+	}
 }
