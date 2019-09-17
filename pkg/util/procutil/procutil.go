@@ -20,31 +20,31 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"math"
 	"os"
+	"os/user"
 	"strconv"
 	"strings"
 	"text/tabwriter"
 	"time"
 
-	"github.com/shirou/gopsutil/process"
-
 	"github.com/arush-sal/lot/pkg/util"
 	"github.com/arush-sal/lot/pkg/util/sysutil"
+	"golang.org/x/sys/unix"
 )
 
 // Process represents a process
 type Process struct {
-	Name    string
-	Pid     int
-	Ppid    int
-	Stat    Stat
-	User    string
-	Cmdline string
+	/*(1) */ Pid string
+	/*(2) */ Name string
+	/*(2) */ Ppid int
+	Stat          Stat
+	User          string
+	Cmdline       string
 }
 
 // Stat represents all of the info found about a process
 type Stat struct {
-	/*(2) */ Comm string
 	/*(3) */ State string
 	/*(5) */ Pgrp int
 	/*(6) */ Session int
@@ -93,38 +93,29 @@ type Stat struct {
 var systemClockTick = sysutil.GetClockTick()
 
 // GetStat will return the stats for a given process
-func (p *Process) GetStat(pid string) (err error) {
-	var info []int
-	var name, stateFound, cl string
-	var rsslim uint64
+func (p *Process) GetStat() (err error) {
+	// var info []int
+	var cl, sstat string
+	// var rsslim uint64
+	var nameStart, nameEnd int
+	// var nstats []string
 
-	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, pid, "stat"))
+	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "stat"))
 	util.ErrorCheck(err)
 	defer stats.Close()
 
 	scanner := bufio.NewScanner(stats)
-	scanner.Split(bufio.ScanWords)
 	for scanner.Scan() {
-		sstat := scanner.Text()
-		stat, err := strconv.Atoi(sstat)
-		if err != nil && err.(*strconv.NumError).Err == strconv.ErrSyntax && len(sstat) > 1 {
-			name = sstat
-			stat = -97
-		}
-
-		if err != nil && err.(*strconv.NumError).Err == strconv.ErrSyntax && len(sstat) == 1 {
-			stateFound = sstat
-			stat = -98
-		}
-
-		if err != nil && err.(*strconv.NumError).Err == strconv.ErrRange {
-			rsslim, err = strconv.ParseUint(sstat, 10, 64)
-			stat = -99
-		}
-		info = append(info, stat)
+		sstat = scanner.Text()
+		nameStart = strings.IndexRune(sstat, '(')
+		nameEnd = strings.IndexRune(sstat[nameStart:], ')')
 	}
 
-	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, pid, "cmdline"))
+	s := &Stat{}
+	_, err = fmt.Sscanf(strings.TrimSpace(sstat[nameStart+nameEnd+2:]), "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &s.State, &p.Ppid, &s.Pgrp, &s.Session, &s.TtyNr, &s.Tpgid, &s.Flags, &s.Minflt, &s.Cminflt, &s.Majflt, &s.Cmajflt, &s.Utime, &s.Stime, &s.Cutime, &s.Cstime, &s.Priority, &s.Nice, &s.NumThreads, &s.Itrealvalue, &s.Starttime, &s.Vsize, &s.Rss, &s.Rsslim, &s.Signal, &s.Blocked, &s.Sigignore, &s.Sigcatch, &s.Nswap, &s.Cnswap, &s.ExitSignal, &s.Processor, &s.RtPriority, &s.Policy, &s.DelayacctBlkioTicks, &s.GuestTime, &s.CguestTime, &s.StartData, &s.EndData, &s.StartBrk, &s.ArgStart, &s.ArgEnd, &s.EnvStart, &s.EnvEnd, &s.ExitCode)
+	util.ErrorCheck(err)
+
+	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "cmdline"))
 	util.ErrorCheck(err)
 	defer cmdline.Close()
 
@@ -133,61 +124,9 @@ func (p *Process) GetStat(pid string) (err error) {
 		cl = cmdScanner.Text()
 	}
 
-	// id := strconv.Itoa(info[4])
-	// usr, err := user.LookupId(id)
-	// if err != nil {
-	// 	return err
-	// }
-
-	p.Name = name
-	p.Pid = info[0]
-	p.Ppid = info[3]
+	p.Name = sstat[nameStart : nameStart+nameEnd+1]
 	p.Cmdline = cl
-	p.Stat = Stat{
-		State:               stateFound,
-		Pgrp:                info[4],
-		Session:             info[5],
-		TtyNr:               info[6],
-		Tpgid:               info[7],
-		Flags:               uint(info[8]),
-		Minflt:              info[9],
-		Cminflt:             info[10],
-		Majflt:              info[11],
-		Cmajflt:             info[12],
-		Utime:               info[13],
-		Stime:               info[14],
-		Cutime:              int64(info[15]),
-		Cstime:              int64(info[16]),
-		Priority:            int64(info[17]),
-		Nice:                int64(info[18]),
-		NumThreads:          int64(info[19]),
-		Itrealvalue:         int64(info[20]),
-		Starttime:           int64(info[21]),
-		Vsize:               info[22],
-		Rss:                 int64(info[23]),
-		Rsslim:              rsslim,
-		Signal:              info[25],
-		Blocked:             info[31],
-		Sigignore:           info[32],
-		Sigcatch:            info[33],
-		Nswap:               info[34],
-		Cnswap:              info[36],
-		ExitSignal:          info[37],
-		Processor:           info[38],
-		RtPriority:          uint(info[39]),
-		Policy:              uint(info[40]),
-		DelayacctBlkioTicks: uint64(info[41]),
-		GuestTime:           info[42],
-		CguestTime:          int64(info[43]),
-		StartData:           info[44],
-		EndData:             info[45],
-		StartBrk:            info[46],
-		ArgStart:            info[47],
-		ArgEnd:              info[48],
-		EnvStart:            info[49],
-		EnvEnd:              info[50],
-		ExitCode:            info[51],
-	}
+	p.Stat = *s
 
 	return nil
 }
@@ -230,17 +169,23 @@ func GetPids() (pids []string, err error) {
 // GetProcessStats returns a list of processes with their respective info
 func GetProcessStats() ([]*Process, error) {
 	pids, err := GetPids()
-	var p = make([]*Process, 0)
+	var p = make([]*Process, len(pids))
 	if err != nil {
 		return nil, err
 	}
-	for _, pid := range pids {
-		ps := &Process{}
-		err = ps.GetStat(pid)
+	for idx, pid := range pids {
+		ps := &Process{Pid: pid}
+		err = ps.GetStat()
 		if err != nil {
-			return nil, nil
+			return nil, err
 		}
-		p = append(p, ps)
+
+		err = ps.GetStatus()
+		if err != nil {
+			return nil, err
+		}
+
+		p[idx] = ps
 	}
 	return p, nil
 }
@@ -258,24 +203,11 @@ func ListProcess() error {
 	fmt.Fprintf(tw, format, "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START", "TIME", "COMMAND")
 	fmt.Fprintf(tw, format, "----", "---", "----", "----", "---", "---", "---", "----", "-----", "----", "-------")
 	for _, p := range ps {
-		proc := process.Process{
-			Pid: int32(p.Pid),
-		}
-		username, err := proc.Username()
-		util.ErrorCheck(err)
-		cpup, err := proc.CPUPercent()
-		util.ErrorCheck(err)
-		terminal, err := proc.Terminal()
-		util.ErrorCheck(err)
-		t, err := proc.Times()
-		util.ErrorCheck(err)
-		cput := t.Total()
+		cpup, cput := p.cpuPercent()
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
-		memp, err := proc.MemoryPercent()
-		util.ErrorCheck(err)
 
-		fmt.Fprintf(tw, psformat, username, p.Pid, cpup, memp, util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), terminal, stat.State, processStartTime, cput, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, psformat, p.User, p.Pid, cpup, p.memPercent(), util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), p.getTerminalName(), stat.State, processStartTime, cput, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 
@@ -302,4 +234,73 @@ func startTime(t int64) string {
 	}
 
 	return sts.Format("15:04")
+}
+
+// GetUserName returns info about the real user of a process
+func (p *Process) GetUserName(s string) (err error) {
+	sl := strings.Split(s, "\t")
+	usr, err := user.LookupId(sl[1])
+	util.ErrorCheck(err)
+	p.User = usr.Username
+	return
+}
+
+func (p *Process) GetVmRss(s string) (err error) {
+	sl := strings.Split(s, "\t")
+	vmRss := strings.Join(sl[1:], " ")
+	p.Stat.Rss, err = strconv.ParseInt(vmRss, 0, 64)
+	return
+}
+
+func (p *Process) GetStatus() (err error) {
+	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "status"))
+	defer statusf.Close()
+
+	scanner := bufio.NewScanner(statusf)
+	for scanner.Scan() {
+		s := scanner.Text()
+		if strings.HasPrefix(s, "Uid") {
+			p.GetUserName(s)
+		}
+		if strings.HasPrefix(s, "VmRSS") {
+			p.GetVmRss(s)
+		}
+	}
+	return
+}
+
+func (p *Process) getTerminalName() (terminal string) {
+	t := uint64(p.Stat.TtyNr)
+	major := unix.Major(t)
+	minor := unix.Minor(t)
+	switch major {
+	case 4:
+		terminal = "tty"
+	case 136:
+		terminal = "pts/"
+	default:
+		return ""
+	}
+	return terminal + strconv.FormatUint(uint64(minor), 10)
+}
+
+func (p *Process) cpuPercent() (float64, float64) {
+	createdTime := p.Stat.createTime()
+	created := time.Unix(0, createdTime*int64(time.Millisecond))
+	totalTime := time.Since(created).Seconds()
+	if totalTime <= 0 {
+		return 0, 0
+	}
+	cput := float64((p.Stat.Utime + p.Stat.Stime) / 100)
+	return math.Min(100, math.Max(0, 100*cput/totalTime)), cput
+}
+
+func (p *Process) memPercent() float32 {
+	tram, err := sysutil.GetSysInfo()
+	util.ErrorCheck(err)
+	total := tram.Totalram
+
+	used := p.Stat.Rss
+
+	return float32(math.Min(100, math.Max(0, (100*float64(used)/float64(total)))))
 }
