@@ -22,8 +22,11 @@ package netutils
 import (
 	"fmt"
 	"net"
+	"os"
+	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/netutils/traceroute"
+	"github.com/arush-sal/lot/pkg/util/netutils/ip"
+	"github.com/arush-sal/lot/pkg/util/netutils/traceroute"
 )
 
 // Trace is an exported function that traces the given address
@@ -69,4 +72,18 @@ func printHop(hop traceroute.TracerouteHop) {
 	} else {
 		fmt.Printf("%-3d *\n", hop.TTL)
 	}
+}
+
+// PrintIPs prints the provided IP addresses
+func PrintIPs(ipList []ip.Record) {
+
+	fmt.Println()
+	const format = "|%d\t|%s\t|%s\t|%s\t|%s\t|%d\t\n"
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 2, ' ', 0)
+
+	for idx, val := range ipList {
+		// fmt.Println(idx, ":", val)
+		fmt.Fprintf(tw, format, idx, val.IPv4, val.IPv6, val.IfaceName, val.Mac, val.MTU)
+	}
+	tw.Flush()
 }
