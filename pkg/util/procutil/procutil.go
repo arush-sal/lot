@@ -245,13 +245,16 @@ func (p *Process) GetUserName(s string) (err error) {
 	return
 }
 
-func (p *Process) GetVmRss(s string) (err error) {
+// GetVMRss returns the virtual memory resident set size of a process
+func (p *Process) GetVMRss(s string) (err error) {
 	sl := strings.Split(s, "\t")
 	vmRss := strings.Join(sl[1:], " ")
 	p.Stat.Rss, err = strconv.ParseInt(vmRss, 0, 64)
 	return
 }
 
+// GetStatus parses the status file of a process
+// and gets the process's UID and VmRSS
 func (p *Process) GetStatus() (err error) {
 	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "status"))
 	defer statusf.Close()
@@ -263,7 +266,7 @@ func (p *Process) GetStatus() (err error) {
 			p.GetUserName(s)
 		}
 		if strings.HasPrefix(s, "VmRSS") {
-			p.GetVmRss(s)
+			p.GetVMRss(s)
 		}
 	}
 	return
