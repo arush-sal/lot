@@ -13,25 +13,27 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package cmd
 
 import (
 	"github.com/arush-sal/lot/pkg/util/netutils"
-
+	"github.com/arush-sal/lot/pkg/util/netutils/ip"
 	"github.com/spf13/cobra"
 )
 
-// traceCmd represents the trace command
-var traceCmd = &cobra.Command{
-	Use:   "trace",
+// ipCmd represents the ip command
+var ipCmd = &cobra.Command{
+	Use:   "ip",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		netutils.Trace(args[0])
+		records := ip.PrivateIPs()
+		netutils.PrintIPs(records)
 	},
 }
 
 func init() {
-	networkCmd.AddCommand(traceCmd)
+	networkCmd.AddCommand(ipCmd)
 
 }
