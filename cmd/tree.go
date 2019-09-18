@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/arush-sal/lot/pkg/util/procutil"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +26,7 @@ var treeCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		procutil.PrintProcessTree()
 	},
 }
 
