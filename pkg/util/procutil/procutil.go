@@ -101,7 +101,9 @@ func (p *Process) GetStat() (err error) {
 	// var nstats []string
 
 	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "stat"))
-	util.ErrorCheck(err)
+	if err != nil {
+		return err
+	}
 	defer stats.Close()
 
 	scanner := bufio.NewScanner(stats)
@@ -113,10 +115,14 @@ func (p *Process) GetStat() (err error) {
 
 	s := &Stat{}
 	_, err = fmt.Sscanf(strings.TrimSpace(sstat[nameStart+nameEnd+2:]), "%s %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d %d", &s.State, &p.Ppid, &s.Pgrp, &s.Session, &s.TtyNr, &s.Tpgid, &s.Flags, &s.Minflt, &s.Cminflt, &s.Majflt, &s.Cmajflt, &s.Utime, &s.Stime, &s.Cutime, &s.Cstime, &s.Priority, &s.Nice, &s.NumThreads, &s.Itrealvalue, &s.Starttime, &s.Vsize, &s.Rss, &s.Rsslim, &s.Signal, &s.Blocked, &s.Sigignore, &s.Sigcatch, &s.Nswap, &s.Cnswap, &s.ExitSignal, &s.Processor, &s.RtPriority, &s.Policy, &s.DelayacctBlkioTicks, &s.GuestTime, &s.CguestTime, &s.StartData, &s.EndData, &s.StartBrk, &s.ArgStart, &s.ArgEnd, &s.EnvStart, &s.EnvEnd, &s.ExitCode)
-	util.ErrorCheck(err)
+	if err != nil {
+		return err
+	}
 
 	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "cmdline"))
-	util.ErrorCheck(err)
+	if err != nil {
+		return err
+	}
 	defer cmdline.Close()
 
 	cmdScanner := bufio.NewScanner(cmdline)
@@ -176,14 +182,15 @@ func GetProcessStats() ([]*Process, error) {
 	for idx, pid := range pids {
 		ps := &Process{Pid: pid}
 		err = ps.GetStat()
-		if err != nil {
-			return nil, err
+		if err == err.(*os.PathError) {
+			ps.Name = "Ghost Process"
+			p[idx] = ps
+			continue
 		}
+		util.ErrorCheck(err)
 
 		err = ps.GetStatus()
-		if err != nil {
-			return nil, err
-		}
+		util.ErrorCheck(err)
 
 		p[idx] = ps
 	}
@@ -203,6 +210,9 @@ func ListProcess() error {
 	fmt.Fprintf(tw, format, "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START", "TIME", "COMMAND")
 	fmt.Fprintf(tw, format, "----", "---", "----", "----", "---", "---", "---", "----", "-----", "----", "-------")
 	for _, p := range ps {
+		if p.isGhostProcess() {
+			continue
+		}
 		cpup, cput := p.cpuPercent()
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
@@ -306,4 +316,11 @@ func (p *Process) memPercent() float32 {
 	used := p.Stat.Rss
 
 	return float32(math.Min(100, math.Max(0, (100*float64(used)/float64(total)))))
+}
+
+func (p *Process) isGhostProcess() bool {
+	if p.Name == "Ghost Process" {
+		return true
+	}
+	return false
 }
