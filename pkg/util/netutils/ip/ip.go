@@ -17,7 +17,9 @@ limitations under the License.
 package ip
 
 import (
+	"io/ioutil"
 	"net"
+	"net/http"
 
 	"github.com/arush-sal/lot/pkg/util"
 )
@@ -75,4 +77,15 @@ func PrivateIPs() []Record {
 		records = append(records, r)
 	}
 	return records
+}
+
+// PublicIP return the public ip as returned by an external service
+func PublicIP() string {
+	resp, err := http.Get("http://myexternalip.com/raw")
+	if err != nil {
+		return ""
+	}
+	defer resp.Body.Close()
+	publicIP, _ := ioutil.ReadAll(resp.Body)
+	return string(publicIP)
 }
