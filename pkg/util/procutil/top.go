@@ -87,25 +87,25 @@ func (ms multiSorter) Less(i, j int) bool {
 }
 
 // Top will return top result for RAM and CPU
-func Top(pus []*Process, res string) ([]*Process, error) {
-	pid := func(c1, c2 *Process) bool {
+func Top(ps []*Process, res string) ([]*Process, error) {
+	pidFunc := func(c1, c2 *Process) bool {
 		return c1.Pid < c2.Pid
 	}
-	cpu := func(c1, c2 *Process) bool {
+	cpuFunc := func(c1, c2 *Process) bool {
 		return c1.Cpup > c2.Cpup
 	}
-	mem := func(c1, c2 *Process) bool {
+	memFunc := func(c1, c2 *Process) bool {
 		return c1.Memp > c2.Memp
 	}
 	switch res {
 	case "cpu":
-		OrderedBy(cpu, pid).Sort(pus)
+		OrderedBy(cpuFunc, pidFunc).Sort(ps)
 	case "ram":
-		OrderedBy(mem, pid).Sort(pus)
+		OrderedBy(memFunc, pidFunc).Sort(ps)
 	default:
 		return nil, errors.New("unknown resource type")
 	}
-	return pus, nil
+	return ps, nil
 }
 
 // MemTop will list all the process in a tabular form
