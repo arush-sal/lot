@@ -16,8 +16,14 @@ limitations under the License.
 package cmd
 
 import (
+	"os"
+
+	"github.com/arush-sal/lot/pkg/util"
+	"github.com/arush-sal/lot/pkg/util/procutil"
 	"github.com/spf13/cobra"
 )
+
+var cpu, ram bool
 
 // topCmd represents the top command
 var topCmd = &cobra.Command{
@@ -25,11 +31,22 @@ var topCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if (cpu && ram) || (!cpu && !ram) {
+			cmd.Usage()
+			os.Exit(0)
+		}
+		if cpu {
+			util.ErrorCheck(procutil.CPUTop())
+		}
+		if ram {
+			util.ErrorCheck(procutil.MemTop())
+		}
 	},
 }
 
 func init() {
+	topCmd.Flags().BoolVarP(&cpu, "cpu", "c", false, "start an interactive shell")
+	topCmd.Flags().BoolVarP(&ram, "ram", "r", false, "start an interactive shell")
 	processCmd.AddCommand(topCmd)
 
 }
