@@ -35,7 +35,7 @@ import (
 
 // Process represents a process
 type Process struct {
-	/*(1) */ Pid string
+	/*(1) */ Pid int
 	/*(2) */ Name string
 	/*(2) */ Ppid int
 	Stat          Stat
@@ -100,7 +100,7 @@ func (p *Process) GetStat() (err error) {
 	var cl, sstat string
 	var nameStart, nameEnd int
 
-	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "stat"))
+	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "stat"))
 	if err != nil {
 		return err
 	}
@@ -119,7 +119,7 @@ func (p *Process) GetStat() (err error) {
 		return err
 	}
 
-	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "cmdline"))
+	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "cmdline"))
 	if err != nil {
 		return err
 	}
@@ -179,7 +179,11 @@ func GetProcessStats() ([]*Process, error) {
 	if err != nil {
 		return nil, err
 	}
-	for idx, pid := range pids {
+	for idx, spid := range pids {
+		pid, err := strconv.Atoi(spid)
+		if err != nil {
+			return nil, err
+		}
 		ps := &Process{Pid: pid}
 		err = ps.GetStat()
 		if err == err.(*os.PathError) {
@@ -201,7 +205,7 @@ func GetProcessStats() ([]*Process, error) {
 func ListProcess() error {
 	const psformat = "%v\t|%v\t|%.3f\t|%.3f\t|%v\t|%v\t|%v\t|%v\t|%v\t|%.3f\t|%v\t\n"
 	const format = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n"
-	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 2, ' ', 0)
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 1, ' ', 0)
 	ps, err := GetProcessStats()
 	if err != nil {
 		return err
@@ -261,7 +265,6 @@ func (p *Process) GetUserName(s string) (err error) {
 func (p *Process) GetVMRss(s string) (err error) {
 	sl := strings.Split(s, "\t")
 	vmRss := strings.Split(strings.Trim(sl[1], " "), " ")
-	fmt.Println(vmRss[0])
 	rss, err := strconv.ParseInt(vmRss[0], 0, 64)
 	p.Stat.Rss = rss * 1024
 	return
@@ -270,7 +273,7 @@ func (p *Process) GetVMRss(s string) (err error) {
 // GetStatus parses the status file of a process
 // and gets the process's UID and VmRSS
 func (p *Process) GetStatus() (err error) {
-	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "status"))
+	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "status"))
 	defer statusf.Close()
 
 	scanner := bufio.NewScanner(statusf)
@@ -314,14 +317,11 @@ func (p *Process) isGhostProcess() bool {
 
 // ExternalStats get stats from the gopsutil
 func (p *Process) ExternalStats() error {
-	pid, err := strconv.Atoi(p.Pid)
-	if err != nil {
-		return err
-	}
 	proc := gopsutil.Process{
-		Pid: int32(pid),
+		Pid: int32(p.Pid),
 	}
-	p.Cpup, err = proc.CPUPercent()
+	cpup, err := proc.CPUPercent()
+	p.Cpup = cpup
 	if err != nil {
 		return err
 	}

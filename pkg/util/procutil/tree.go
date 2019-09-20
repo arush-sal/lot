@@ -42,7 +42,7 @@ func getProcessTree() gotree.Tree {
 		}
 		p := new(process)
 		p.Name = ps.Name
-		p.Pid = ps.Pid
+		p.Pid = strconv.Itoa(ps.Pid)
 		list[ps.Ppid] = append(list[ps.Ppid], p)
 	}
 
