@@ -20,7 +20,6 @@ import (
 	"bufio"
 	"fmt"
 	"io"
-	"math"
 	"os"
 	"os/user"
 	"strconv"
@@ -30,17 +29,22 @@ import (
 
 	"github.com/arush-sal/lot/pkg/util"
 	"github.com/arush-sal/lot/pkg/util/sysutil"
+	gopsutil "github.com/shirou/gopsutil/process"
+
 	"golang.org/x/sys/unix"
 )
 
 // Process represents a process
 type Process struct {
-	/*(1) */ Pid string
+	/*(1) */ Pid int
 	/*(2) */ Name string
 	/*(2) */ Ppid int
 	Stat          Stat
 	User          string
 	Cmdline       string
+	Cput          float64
+	Cpup          float64
+	Memp          float32
 }
 
 // Stat represents all of the info found about a process
@@ -94,13 +98,10 @@ var systemClockTick = sysutil.GetClockTick()
 
 // GetStat will return the stats for a given process
 func (p *Process) GetStat() (err error) {
-	// var info []int
 	var cl, sstat string
-	// var rsslim uint64
 	var nameStart, nameEnd int
-	// var nstats []string
 
-	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "stat"))
+	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "stat"))
 	if err != nil {
 		return err
 	}
@@ -119,7 +120,7 @@ func (p *Process) GetStat() (err error) {
 		return err
 	}
 
-	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "cmdline"))
+	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "cmdline"))
 	if err != nil {
 		return err
 	}
@@ -179,7 +180,11 @@ func GetProcessStats() ([]*Process, error) {
 	if err != nil {
 		return nil, err
 	}
-	for idx, pid := range pids {
+	for idx, spid := range pids {
+		pid, err := strconv.Atoi(spid)
+		if err != nil {
+			return nil, err
+		}
 		ps := &Process{Pid: pid}
 		err = ps.GetStat()
 		if err == err.(*os.PathError) {
@@ -189,8 +194,8 @@ func GetProcessStats() ([]*Process, error) {
 		}
 		util.ErrorCheck(err)
 
-		err = ps.GetStatus()
-		util.ErrorCheck(err)
+		util.ErrorCheck(ps.GetStatus())
+		util.ErrorCheck(ps.ExternalStats())
 
 		p[idx] = ps
 	}
@@ -201,7 +206,7 @@ func GetProcessStats() ([]*Process, error) {
 func ListProcess() error {
 	const psformat = "%v\t|%v\t|%.3f\t|%.3f\t|%v\t|%v\t|%v\t|%v\t|%v\t|%.3f\t|%v\t\n"
 	const format = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n"
-	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 2, ' ', 0)
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 1, ' ', 0)
 	ps, err := GetProcessStats()
 	if err != nil {
 		return err
@@ -213,11 +218,11 @@ func ListProcess() error {
 		if p.isGhostProcess() {
 			continue
 		}
-		cpup, cput := p.cpuPercent()
+
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, psformat, p.User, p.Pid, cpup, p.memPercent(), util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), p.getTerminalName(), stat.State, processStartTime, cput, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, psformat, p.User, p.Pid, p.Cpup, p.Memp, util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), p.getTerminalName(), stat.State, processStartTime, p.Cput, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 
@@ -250,33 +255,40 @@ func startTime(t int64) string {
 func (p *Process) GetUserName(s string) (err error) {
 	sl := strings.Split(s, "\t")
 	usr, err := user.LookupId(sl[1])
-	util.ErrorCheck(err)
+	if err != nil {
+		return err
+	}
 	p.User = usr.Username
-	return
+	return nil
 }
 
 // GetVMRss returns the virtual memory resident set size of a process
 func (p *Process) GetVMRss(s string) (err error) {
 	sl := strings.Split(s, "\t")
-	vmRss := strings.Join(sl[1:], " ")
-	p.Stat.Rss, err = strconv.ParseInt(vmRss, 0, 64)
+	vmRss := strings.Split(strings.Trim(sl[1], " "), " ")
+	rss, err := strconv.ParseInt(vmRss[0], 0, 64)
+	p.Stat.Rss = rss * 1024
 	return
 }
 
 // GetStatus parses the status file of a process
 // and gets the process's UID and VmRSS
 func (p *Process) GetStatus() (err error) {
-	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, p.Pid, "status"))
+	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "status"))
 	defer statusf.Close()
 
 	scanner := bufio.NewScanner(statusf)
 	for scanner.Scan() {
 		s := scanner.Text()
 		if strings.HasPrefix(s, "Uid") {
-			p.GetUserName(s)
+			if err := p.GetUserName(s); err != nil {
+				return err
+			}
 		}
 		if strings.HasPrefix(s, "VmRSS") {
-			p.GetVMRss(s)
+			if err := p.GetVMRss(s); err != nil {
+				return err
+			}
 		}
 	}
 	return
@@ -297,30 +309,30 @@ func (p *Process) getTerminalName() (terminal string) {
 	return terminal + strconv.FormatUint(uint64(minor), 10)
 }
 
-func (p *Process) cpuPercent() (float64, float64) {
-	createdTime := p.Stat.createTime()
-	created := time.Unix(0, createdTime*int64(time.Millisecond))
-	totalTime := time.Since(created).Seconds()
-	if totalTime <= 0 {
-		return 0, 0
-	}
-	cput := float64((p.Stat.Utime + p.Stat.Stime) / 100)
-	return math.Min(100, math.Max(0, 100*cput/totalTime)), cput
-}
-
-func (p *Process) memPercent() float32 {
-	tram, err := sysutil.GetSysInfo()
-	util.ErrorCheck(err)
-	total := tram.Totalram
-
-	used := p.Stat.Rss
-
-	return float32(math.Min(100, math.Max(0, (100*float64(used)/float64(total)))))
-}
-
 func (p *Process) isGhostProcess() bool {
 	if p.Name == "Ghost Process" {
 		return true
 	}
 	return false
+}
+
+// ExternalStats get stats from the gopsutil
+func (p *Process) ExternalStats() error {
+	proc := gopsutil.Process{
+		Pid: int32(p.Pid),
+	}
+	cpup, err := proc.CPUPercent()
+	p.Cpup = cpup
+	if err != nil {
+		return err
+	}
+
+	t, err := proc.Times()
+	if err != nil {
+		return err
+	}
+	p.Cput = t.Total()
+
+	p.Memp, err = proc.MemoryPercent()
+	return err
 }

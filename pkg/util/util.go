@@ -57,3 +57,15 @@ func TransformSize(n int64) string {
 		return strconv.FormatInt(n, 10) + "mB"
 	}
 }
+
+func AtoI64(s string) int64 {
+	n, err := strconv.ParseInt(s, 10, 64)
+	ErrorCheck(err)
+	return n
+}
+
+func AtoI(s string) int {
+	n, err := strconv.Atoi(s)
+	ErrorCheck(err)
+	return n
+}
