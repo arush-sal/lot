@@ -30,6 +30,7 @@ var ipCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		records := ip.PrivateIPs()
 		netutils.PrintIPs(records)
+		netutils.PrintPublicIP(ip.PublicIP())
 	},
 }
 

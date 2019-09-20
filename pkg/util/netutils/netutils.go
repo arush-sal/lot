@@ -87,3 +87,12 @@ func PrintIPs(ipList []ip.Record) {
 	}
 	tw.Flush()
 }
+
+// PrintPublicIP prints the provided public IP addresses
+func PrintPublicIP(addr string) {
+	fmt.Println()
+	const format = "|%s\t|%s\n"
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 2, ' ', 0)
+	fmt.Fprintf(tw, format, "Public IP: ", addr)
+	tw.Flush()
+}
