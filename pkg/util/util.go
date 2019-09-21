@@ -45,27 +45,18 @@ func CreateProcPath(args ...string) string {
 }
 
 // TransformSize takes bytes in int64 format and returns it in a human readable format
-func TransformSize(n int64) string {
+func TransformSize(n uint64) string {
 	switch {
 	case n < 1024:
-		return strconv.FormatInt(n, 10) + "B"
+		return strconv.FormatUint(n, 10) + "B"
 	case n < 1048576 && n > 1024:
 		n = n / 1024
-		return strconv.FormatInt(n, 10) + "kB"
+		return strconv.FormatUint(n, 10) + "kB"
+	case n < 1073741824:
+		n = n / 1048576
+		return strconv.FormatUint(n, 10) + "mB"
 	default:
-		n = (n / 1024) / 1024
-		return strconv.FormatInt(n, 10) + "mB"
+		n = n / 1073741824
+		return strconv.FormatUint(n, 10) + "gB"
 	}
-}
-
-func AtoI64(s string) int64 {
-	n, err := strconv.ParseInt(s, 10, 64)
-	ErrorCheck(err)
-	return n
-}
-
-func AtoI(s string) int {
-	n, err := strconv.Atoi(s)
-	ErrorCheck(err)
-	return n
 }

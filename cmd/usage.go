@@ -16,6 +16,8 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/arush-sal/lot/pkg/util"
+	"github.com/arush-sal/lot/pkg/util/diskutil"
 	"github.com/spf13/cobra"
 )
 
@@ -25,7 +27,7 @@ var usageCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		util.ErrorCheck(diskutil.PrintUsageStats())
 	},
 }
 

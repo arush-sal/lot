@@ -130,7 +130,7 @@ func MemTop() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, tformat, p.Memp, util.TransformSize(stat.Rss), util.TransformSize(int64(stat.Vsize)), p.Cpup, processStartTime, p.Cput, p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, tformat, p.Memp, util.TransformSize(uint64(stat.Rss)), util.TransformSize(uint64(stat.Vsize)), p.Cpup, processStartTime, p.Cput, p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 
@@ -159,7 +159,7 @@ func CPUTop() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, tformat, p.Cpup, p.Cput, processStartTime, p.Memp, util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, tformat, p.Cpup, p.Cput, processStartTime, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 

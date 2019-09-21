@@ -26,9 +26,9 @@ var processCmd = &cobra.Command{
 	Use:   "process",
 	Short: "",
 	Long:  ``,
-	// Run: func(cmd *cobra.Command, args []string) {
-
-	// },
+	Run: func(cmd *cobra.Command, args []string) {
+		cmd.Usage()
+	},
 }
 
 func init() {
