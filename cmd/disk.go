@@ -25,7 +25,7 @@ var diskCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		cmd.Usage()
 	},
 }
 

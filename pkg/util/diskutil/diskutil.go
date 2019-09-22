@@ -17,6 +17,10 @@ limitations under the License.
 package diskutil
 
 import (
+	"fmt"
+	"os"
+	"text/tabwriter"
+
 	"github.com/arush-sal/lot/pkg/util"
 	"github.com/shirou/gopsutil/disk"
 )
@@ -26,7 +30,6 @@ type DiskStat struct {
 	Device            string
 	Mountpoint        string
 	Fstype            string
-	Path              string
 	Total             uint64
 	Free              uint64
 	Used              uint64
@@ -35,6 +38,26 @@ type DiskStat struct {
 	InodesUsed        uint64
 	InodesFree        uint64
 	InodesUsedPercent float64
+}
+
+// GetUsageStat returns slice of DiskStat with the usage info
+func (dstat *DiskStat) GetUsageStat() error {
+	ustat, err := disk.Usage(dstat.Mountpoint)
+	util.ErrorCheck(err)
+
+	// The disk package doesn't round of properly
+	// therefore the final size is < 1 than the size reported by df -h
+	// need to reimplement this.
+	dstat.Total = ustat.Total
+	dstat.Free = ustat.Free
+	dstat.Used = ustat.Used
+	dstat.UsedPercent = ustat.UsedPercent
+	dstat.InodesTotal = ustat.InodesTotal
+	dstat.InodesUsed = ustat.InodesUsed
+	dstat.InodesFree = ustat.InodesFree
+	dstat.InodesUsedPercent = ustat.InodesUsedPercent
+
+	return err
 }
 
 // GetPartitions returns slice of DiskStat with the partition info
@@ -64,19 +87,27 @@ func GetDiskStats() ([]*DiskStat, error) {
 	return dstats, err
 }
 
-// GetUsageStat returns slice of DiskStat with the usage info
-func (dstat *DiskStat) GetUsageStat() error {
-	ustat, err := disk.Usage(dstat.Mountpoint)
-	util.ErrorCheck(err)
+// PrintUsageStats prints the DiskStat usage stats
+func PrintUsageStats() error {
+	const psformat = "%s\t|%s\t|%s\t|%.1f\t|%s\t|%s\t|%s\t|%.1f\t|%d\t|%d\t|%d\t|\n"
+	const format = "%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\t\n"
+	tw := new(tabwriter.Writer).Init(os.Stdout, 0, 4, 1, ' ', 0)
+	dsks, err := GetDiskStats()
+	if err != nil {
+		return err
+	}
 
-	dstat.Total = ustat.Total
-	dstat.Free = ustat.Free
-	dstat.Used = ustat.Used
-	dstat.UsedPercent = ustat.UsedPercent
-	dstat.InodesTotal = ustat.InodesTotal
-	dstat.InodesUsed = ustat.InodesUsed
-	dstat.InodesFree = ustat.InodesFree
-	dstat.InodesUsedPercent = ustat.InodesUsedPercent
+	fmt.Fprintf(tw, format, "Device", "Mount Path", "FS", "FREE%", "FREE", "USED", "TOTAL", "IFREE%", "IFREE", "IUSED", "ITOTAL")
+	fmt.Fprintf(tw, format, "------", "----------", "--", "-----", "----", "-----", "-----", "------", "-----", "------", "------")
+	for _, dsk := range dsks {
 
-	return err
+		util.ErrorCheck(dsk.GetUsageStat())
+		free := util.TransformSize(dsk.Free)
+		used := util.TransformSize(dsk.Used)
+		total := util.TransformSize(dsk.Total)
+		fmt.Fprintf(tw, psformat, dsk.Device, dsk.Mountpoint, dsk.Fstype, 100.0-dsk.UsedPercent, free, used, total, 100.0-dsk.InodesUsedPercent, dsk.InodesFree, dsk.InodesUsed, dsk.InodesTotal)
+	}
+	tw.Flush()
+
+	return nil
 }

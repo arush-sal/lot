@@ -222,7 +222,7 @@ func ListProcess() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, psformat, p.User, p.Pid, p.Cpup, p.Memp, util.TransformSize(int64(stat.Vsize)), util.TransformSize(stat.Rss), p.getTerminalName(), stat.State, processStartTime, p.Cput, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, psformat, p.User, p.Pid, p.Cpup, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.getTerminalName(), stat.State, processStartTime, p.Cput, strings.Trim(p.Name, "()"))
 	}
 	tw.Flush()
 
