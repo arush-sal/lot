@@ -33,7 +33,7 @@ var (
 var rootCmd = &cobra.Command{
 	Use:     "lot",
 	Short:   "",
-	Version: "v0.0.1",
+	Version: "v0.3.1",
 	Long:    ``,
 	// Run: func(cmd *cobra.Command, args []string) {
 
