@@ -17,33 +17,33 @@ package cmd
 
 import (
 	"github.com/arush-sal/lot/pkg/util"
-	"github.com/arush-sal/lot/pkg/util/procutil"
+	"github.com/arush-sal/lot/pkg/util/diskutil"
 	"github.com/spf13/cobra"
 )
 
-var cpu, ram bool
+var read, write bool
 
-// topCmd represents the top command
-var topCmd = &cobra.Command{
+// dtopCmd represents the dtop command
+var dtopCmd = &cobra.Command{
 	Use:   "top",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		if (cpu && ram) || (!cpu && !ram) {
-			util.ErrorCheck(procutil.CPUTop())
+		if (write && read) || (!write && !read) {
+			util.ErrorCheck(diskutil.WriteTop())
 		}
-		if cpu {
-			util.ErrorCheck(procutil.CPUTop())
+		if write {
+			util.ErrorCheck(diskutil.WriteTop())
 		}
-		if ram {
-			util.ErrorCheck(procutil.MemTop())
+		if read {
+			util.ErrorCheck(diskutil.ReadTop())
 		}
+
 	},
 }
 
 func init() {
-	topCmd.Flags().BoolVarP(&cpu, "cpu", "c", false, "start an interactive shell")
-	topCmd.Flags().BoolVarP(&ram, "ram", "r", false, "start an interactive shell")
-	processCmd.AddCommand(topCmd)
-
+	diskCmd.AddCommand(dtopCmd)
+	dtopCmd.Flags().BoolVarP(&write, "write", "w", false, "start an interactive shell")
+	dtopCmd.Flags().BoolVarP(&read, "read", "r", false, "start an interactive shell")
 }

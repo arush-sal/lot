@@ -215,7 +215,7 @@ func ListProcess() error {
 	fmt.Fprintf(tw, format, "USER", "PID", "%CPU", "%MEM", "VSZ", "RSS", "TTY", "STAT", "START", "TIME", "COMMAND")
 	fmt.Fprintf(tw, format, "----", "---", "----", "----", "---", "---", "---", "----", "-----", "----", "-------")
 	for _, p := range ps {
-		if p.isGhostProcess() {
+		if p.IsGhostProcess() {
 			continue
 		}
 
@@ -309,7 +309,7 @@ func (p *Process) getTerminalName() (terminal string) {
 	return terminal + strconv.FormatUint(uint64(minor), 10)
 }
 
-func (p *Process) isGhostProcess() bool {
+func (p *Process) IsGhostProcess() bool {
 	if p.Name == "Ghost Process" {
 		return true
 	}

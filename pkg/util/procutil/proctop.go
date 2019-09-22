@@ -87,7 +87,7 @@ func (ms multiSorter) Less(i, j int) bool {
 }
 
 // Top will return top result for RAM and CPU
-func Top(ps []*Process, res string) ([]*Process, error) {
+func Top(ps []*Process, res string) error {
 	pidFunc := func(c1, c2 *Process) bool {
 		return c1.Pid < c2.Pid
 	}
@@ -103,9 +103,9 @@ func Top(ps []*Process, res string) ([]*Process, error) {
 	case "ram":
 		OrderedBy(memFunc, pidFunc).Sort(ps)
 	default:
-		return nil, errors.New("unknown resource type")
+		return errors.New("unknown resource type")
 	}
-	return ps, nil
+	return nil
 }
 
 // MemTop will list all the process in a tabular form
@@ -118,12 +118,14 @@ func MemTop() error {
 		return err
 	}
 
-	Top(ps, "ram")
+	if err := Top(ps, "ram"); err != nil {
+		return err
+	}
 
 	fmt.Fprintf(tw, format, "%MEM", "RSS", "VSZ", "%CPU", "START", "TIME", "PID", "USER", "TTY", "STAT", "COMMAND")
 	fmt.Fprintf(tw, format, "----", "---", "---", "----", "-----", "----", "---", "----", "---", "----", "-------")
 	for _, p := range ps {
-		if p.isGhostProcess() {
+		if p.IsGhostProcess() {
 			continue
 		}
 
@@ -152,7 +154,7 @@ func CPUTop() error {
 	fmt.Fprintf(tw, format, "%CPU", "TIME", "START", "%MEM", "VSZ", "RSS", "PID", "USER", "TTY", "STAT", "COMMAND")
 	fmt.Fprintf(tw, format, "----", "-----", "----", "----", "---", "---", "---", "----", "---", "----", "-------")
 	for _, p := range ps {
-		if p.isGhostProcess() {
+		if p.IsGhostProcess() {
 			continue
 		}
 

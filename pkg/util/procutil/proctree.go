@@ -37,7 +37,7 @@ func getProcessTree() gotree.Tree {
 	util.ErrorCheck(err)
 
 	for _, ps := range processes {
-		if ps.isGhostProcess() {
+		if ps.IsGhostProcess() {
 			continue
 		}
 		p := new(process)
