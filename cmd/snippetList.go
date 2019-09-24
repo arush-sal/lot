@@ -16,41 +16,20 @@ limitations under the License.
 package cmd
 
 import (
-	"fmt"
-	"os"
-
 	"github.com/arush-sal/lot/pkg/util/bpfutil"
 	"github.com/spf13/cobra"
 )
 
-// snippetCmd represents the snippet command
-var snippetCmd = &cobra.Command{
-	Use:   "snippet",
+// listCmd represents the list command
+var slistCmd = &cobra.Command{
+	Use:   "list",
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil {
-			cmd.Usage()
-		}
-
-		if len(args) > 1 {
-			fmt.Println("Not a valid bpftrace snippet")
-			bpfutil.ListSnippets()
-			os.Exit(0)
-		}
-
-		if !bpfutil.IsValidSnippet(args[0]) {
-			fmt.Println("Not a valid bpftrace snippet")
-			bpfutil.ListSnippets()
-			os.Exit(0)
-		}
-
-		bpfutil.ExecuteSnippet(args[0])
-
+		bpfutil.ListSnippets()
 	},
 }
 
 func init() {
-	bpfCmd.AddCommand(snippetCmd)
-
+	snippetCmd.AddCommand(slistCmd)
 }

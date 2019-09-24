@@ -39,13 +39,6 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	// usr, err := user.Current()
-	// util.ErrorCheck(err)
-
-	// if usr.Uid != "0" {
-	// 	util.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
-	// }
-
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}
