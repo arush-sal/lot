@@ -30,8 +30,8 @@ type process struct {
 	Pid  string
 }
 
-// getProcessTree returns a tree with process ancestral hierarchy
-func getProcessTree() gotree.Tree {
+// GetProcessTree returns a tree with process ancestral hierarchy
+func GetProcessTree() gotree.Tree {
 	list := make(map[int][]*process)
 	processes, err := GetProcessStats()
 	util.ErrorCheck(err)
@@ -71,5 +71,5 @@ func getProcessTree() gotree.Tree {
 
 // PrintProcessTree prints a tree of processes with their ancestral hierarchy
 func PrintProcessTree() {
-	fmt.Println(getProcessTree().Print())
+	fmt.Println(GetProcessTree().Print())
 }

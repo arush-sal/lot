@@ -16,6 +16,7 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/arush-sal/lot/pkg/util/dashboard"
 	"github.com/spf13/cobra"
 )
 
@@ -27,7 +28,7 @@ var processCmd = &cobra.Command{
 	Short: "",
 	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-		cmd.Usage()
+		dashboard.ProcessDashboard()
 	},
 }
 
