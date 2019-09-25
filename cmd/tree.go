@@ -23,8 +23,8 @@ import (
 // treeCmd represents the tree command
 var treeCmd = &cobra.Command{
 	Use:   "tree",
-	Short: "",
-	Long:  ``,
+	Short: "Prints a process tree with process ancestral hierarchy",
+	Long:  `lot process tree prints the hierarchical tree of processes`,
 	Run: func(cmd *cobra.Command, args []string) {
 		procutil.PrintProcessTree()
 	},
