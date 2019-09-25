@@ -28,9 +28,11 @@ var (
 // rootCmd represents the base command when called without any subcommands
 var rootCmd = &cobra.Command{
 	Use:     "lot",
-	Short:   "",
+	Short:   "Run lot --help to see available commands",
 	Version: "v0.3.1",
-	Long:    ``,
+	Long:    `LoT is a command line tool designed to serve as a single point of access for linux system observability.
+It provides commands to navigate through the process, disk, and network information.
+It also provides support for running bpf snippets to gather additional information about the state of the system`,
 	// Run: func(cmd *cobra.Command, args []string) {
 
 	// },
@@ -39,13 +41,6 @@ var rootCmd = &cobra.Command{
 // Execute adds all child commands to the root command and sets flags appropriately.
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
-	// usr, err := user.Current()
-	// util.ErrorCheck(err)
-
-	// if usr.Uid != "0" {
-	// 	util.ErrorCheck(fmt.Errorf("Needs root privileges to run"))
-	// }
-
 	if err := rootCmd.Execute(); err != nil {
 		os.Exit(1)
 	}

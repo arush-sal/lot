@@ -22,8 +22,9 @@ import (
 // diskCmd represents the disk command
 var diskCmd = &cobra.Command{
 	Use:   "disk",
-	Short: "",
-	Long:  ``,
+	Short: "Command related to disk operations",
+	Long:  `lot disk brings up the disk dashboard.
+lot disk --help can be run to list the commands.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		cmd.Usage()
 	},

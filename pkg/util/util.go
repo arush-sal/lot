@@ -19,6 +19,8 @@ package util
 import (
 	"fmt"
 	"os"
+	"os/exec"
+	"os/user"
 	"strconv"
 )
 
@@ -51,12 +53,48 @@ func TransformSize(n uint64) string {
 		return strconv.FormatUint(n, 10) + "B"
 	case n < 1048576 && n > 1024:
 		n = n / 1024
-		return strconv.FormatUint(n, 10) + "kB"
+		return strconv.FormatUint(n, 10) + "KiB"
 	case n < 1073741824:
 		n = n / 1048576
-		return strconv.FormatUint(n, 10) + "mB"
+		return strconv.FormatUint(n, 10) + "MiB"
 	default:
 		n = n / 1073741824
-		return strconv.FormatUint(n, 10) + "gB"
+		return strconv.FormatUint(n, 10) + "GiB"
 	}
+}
+
+func IsRoot() bool {
+	usr, err := user.Current()
+	ErrorCheck(err)
+	if usr.Uid != "0" {
+		if !checkSudoSession() {
+			return false
+		}
+	}
+	return true
+}
+
+func checkSudoSession() bool {
+	cmd := exec.Command("sudo", "-n", "true")
+	err := cmd.Run()
+	if err != nil {
+		return false
+	}
+	return true
+}
+
+func getCurrentShell() string {
+	return os.Getenv("SHELL")
+}
+
+func GetSudoOrDie() *exec.Cmd {
+
+	if !IsRoot() {
+		fmt.Println("Needs root privileges to run")
+	}
+	cmd := exec.Command("sudo")
+	cmd.Stdin = os.Stdin
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+	return cmd
 }

@@ -16,21 +16,20 @@ limitations under the License.
 package cmd
 
 import (
+	"github.com/arush-sal/lot/pkg/util/bpfutil"
 	"github.com/spf13/cobra"
 )
 
-// completionCmd represents the completion command
-var completionCmd = &cobra.Command{
-	Use:   "completion",
-	Short: "Provides the completion script for lot",
-	Long:  `lot completion <command> provides the completion script for lot for a specified shell.
-Currently bash and zsh are supported`,
+// listCmd represents the list command
+var slistCmd = &cobra.Command{
+	Use:   "list",
+	Short: "",
+	Long:  ``,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		bpfutil.ListSnippets()
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(completionCmd)
-
+	snippetCmd.AddCommand(slistCmd)
 }
