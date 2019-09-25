@@ -23,8 +23,8 @@ import (
 // listCmd represents the list command
 var listCmd = &cobra.Command{
 	Use:   "list",
-	Short: "",
-	Long:  ``,
+	Short: "Lists the running processes with stats",
+	Long:  `lot process list returns the information about running processes with their stats.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		procutil.ListProcess()
 	},

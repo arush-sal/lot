@@ -24,8 +24,8 @@ import (
 // traceCmd represents the trace command
 var traceCmd = &cobra.Command{
 	Use:   "trace",
-	Short: "",
-	Long:  ``,
+	Short: "Traces the destination address hop by hop",
+	Long:  `lot network trace is a go-lang implementation of traceroot that provides hop by hop information of the path to destination`,
 	Run: func(cmd *cobra.Command, args []string) {
 		netutils.Trace(args[0])
 	},

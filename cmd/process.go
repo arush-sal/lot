@@ -25,8 +25,10 @@ var interactive bool
 // processCmd represents the process command
 var processCmd = &cobra.Command{
 	Use:   "process",
-	Short: "",
-	Long:  ``,
+	Short: "Command related to process operations",
+	Long:  `lot process shows the process dashboard.
+lot process --help can be run to check subcommands.
+lot process <command> runs the specific operation`,
 	Run: func(cmd *cobra.Command, args []string) {
 		dashboard.ProcessDashboard()
 	},

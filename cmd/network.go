@@ -22,8 +22,9 @@ import (
 // networkCmd represents the network command
 var networkCmd = &cobra.Command{
 	Use:   "network",
-	Short: "",
-	Long:  ``,
+	Short: "Command related to network operations",
+	Long:  `lot network --help can be run to check subcommands.
+lot network <command> runs the specific operation`,
 	// Run: func(cmd *cobra.Command, args []string) {
 
 	// },

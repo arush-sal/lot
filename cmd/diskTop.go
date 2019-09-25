@@ -26,8 +26,9 @@ var read, write bool
 // dtopCmd represents the dtop command
 var dtopCmd = &cobra.Command{
 	Use:   "top",
-	Short: "",
-	Long:  ``,
+	Short: "Provides the sorted disk usage",
+	Long:  `lot disk top provides the sorted overview of the disk usage.
+Sorting can be done by process or memory.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if (write && read) || (!write && !read) {
 			util.ErrorCheck(diskutil.WriteTop())

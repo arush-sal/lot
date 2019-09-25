@@ -26,8 +26,8 @@ var cpu, ram bool
 // topCmd represents the top command
 var topCmd = &cobra.Command{
 	Use:   "top",
-	Short: "",
-	Long:  ``,
+	Short: "Provides the information about top resource consuming processes",
+	Long:  `lot process top provides the information about the top process by their cpu or memory consumption`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if (cpu && ram) || (!cpu && !ram) {
 			util.ErrorCheck(procutil.CPUTop())

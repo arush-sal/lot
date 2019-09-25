@@ -25,8 +25,9 @@ import (
 // ipCmd represents the ip command
 var ipCmd = &cobra.Command{
 	Use:   "ip",
-	Short: "",
-	Long:  ``,
+	Short: "Provides public and private IP Addresses of the system",
+	Long:  `lot network ip lists the private IP Adresses (v4 & v6) along with their interface names.
+It also lists the hardware address of the interface and the MTU.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		records := ip.PrivateIPs()
 		netutils.PrintIPs(records)

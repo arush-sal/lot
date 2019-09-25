@@ -22,8 +22,9 @@ import (
 // completionCmd represents the completion command
 var completionCmd = &cobra.Command{
 	Use:   "completion",
-	Short: "",
-	Long:  ``,
+	Short: "Provides the completion script for lot",
+	Long:  `lot completion <command> provides the completion script for lot for a specified shell.
+Currently bash and zsh are supported`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 	},

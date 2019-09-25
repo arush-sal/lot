@@ -24,8 +24,8 @@ import (
 // usageCmd represents the usage command
 var usageCmd = &cobra.Command{
 	Use:   "usage",
-	Short: "",
-	Long:  ``,
+	Short: "Provide disk usage information of partitions",
+	Long:  `lot disk usage provide the disk usage of the partitions`,
 	Run: func(cmd *cobra.Command, args []string) {
 		util.ErrorCheck(diskutil.PrintUsageStats())
 	},
