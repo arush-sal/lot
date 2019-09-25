@@ -42,8 +42,8 @@ var topCmd = &cobra.Command{
 }
 
 func init() {
-	topCmd.Flags().BoolVarP(&cpu, "cpu", "c", false, "start an interactive shell")
-	topCmd.Flags().BoolVarP(&ram, "ram", "r", false, "start an interactive shell")
+	topCmd.Flags().BoolVarP(&cpu, "cpu", "c", false, "show top CPU consuming processes")
+	topCmd.Flags().BoolVarP(&ram, "ram", "r", false, "show top RAM consuming processes")
 	processCmd.AddCommand(topCmd)
 
 }

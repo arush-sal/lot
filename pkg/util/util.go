@@ -53,13 +53,13 @@ func TransformSize(n uint64) string {
 		return strconv.FormatUint(n, 10) + "B"
 	case n < 1048576 && n > 1024:
 		n = n / 1024
-		return strconv.FormatUint(n, 10) + "kB"
+		return strconv.FormatUint(n, 10) + "KiB"
 	case n < 1073741824:
 		n = n / 1048576
-		return strconv.FormatUint(n, 10) + "mB"
+		return strconv.FormatUint(n, 10) + "MiB"
 	default:
 		n = n / 1073741824
-		return strconv.FormatUint(n, 10) + "gB"
+		return strconv.FormatUint(n, 10) + "GiB"
 	}
 }
 

@@ -31,21 +31,21 @@ var snippetCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		if args == nil {
 			cmd.Usage()
-		}
-
-		if len(args) > 1 {
-			fmt.Println("Not a valid bpftrace snippet")
-			bpfutil.ListSnippets()
 			os.Exit(0)
 		}
 
-		if !bpfutil.IsValidSnippet(args[0]) {
-			fmt.Println("Not a valid bpftrace snippet")
+		if len(args) == 1 {
+			if !bpfutil.IsValidSnippet(args[0]) {
+				fmt.Printf("Not a valid bpftrace snippet\n\n")
+				bpfutil.ListSnippets()
+				os.Exit(0)
+			}
+			bpfutil.ExecuteSnippet(args[0])
+		} else {
+			fmt.Printf("Missing bpftrace snippet\n\n")
 			bpfutil.ListSnippets()
 			os.Exit(0)
 		}
-
-		bpfutil.ExecuteSnippet(args[0])
 
 	},
 }

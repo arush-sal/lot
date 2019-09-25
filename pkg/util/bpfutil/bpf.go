@@ -144,7 +144,6 @@ func ExecuteSnippet(arg string) {
 	file := createSnippetFile(arg)
 
 	cmd = util.GetSudoOrDie()
-	fmt.Println(file.Name())
 	cmd.Args = append(cmd.Args, btpath, file.Name())
 
 	util.ErrorCheck(cmd.Run())

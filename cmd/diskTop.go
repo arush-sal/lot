@@ -27,7 +27,7 @@ var read, write bool
 var dtopCmd = &cobra.Command{
 	Use:   "top",
 	Short: "Provides the sorted disk usage",
-	Long:  `lot disk top provides the sorted overview of the disk usage.
+	Long: `lot disk top provides the sorted overview of the disk usage.
 Sorting can be done by process or memory.`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if (write && read) || (!write && !read) {
@@ -45,6 +45,6 @@ Sorting can be done by process or memory.`,
 
 func init() {
 	diskCmd.AddCommand(dtopCmd)
-	dtopCmd.Flags().BoolVarP(&write, "write", "w", false, "start an interactive shell")
-	dtopCmd.Flags().BoolVarP(&read, "read", "r", false, "start an interactive shell")
+	dtopCmd.Flags().BoolVarP(&write, "write", "w", false, "show top disk write consuming processes")
+	dtopCmd.Flags().BoolVarP(&read, "read", "r", false, "show top disk read consuming processes")
 }
