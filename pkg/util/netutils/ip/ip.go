@@ -1,3 +1,5 @@
+// +build linux
+
 /*
 Copyright © 2019 LoT Authors
 
