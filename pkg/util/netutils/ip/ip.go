@@ -23,7 +23,7 @@ import (
 	"net"
 	"net/http"
 
-	"github.com/arush-sal/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util"
 )
 
 // Record is a struct that holds ip address along with the interface name

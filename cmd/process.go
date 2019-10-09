@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/arush-sal/lot/pkg/util/dashboard"
+	"github.com/infracloudio/lot/pkg/util/dashboard"
 	"github.com/spf13/cobra"
 )
 
