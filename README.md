@@ -17,7 +17,7 @@ Follow the steps below to build LoT on your machine.
 #### Clone the repository.
 
 ```bash
-git clone https://github.com/arush-sal/lot.git
+git clone https://github.com/infracloudio/lot.git
 ```
 
 #### Change directory to lot and run `make release-test`

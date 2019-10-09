@@ -23,7 +23,7 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util"
 	"github.com/shirou/gopsutil/disk"
 )
 

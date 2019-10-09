@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/arush-sal/lot/pkg/util/procutil"
+	"github.com/infracloudio/lot/pkg/util/procutil"
 	"github.com/spf13/cobra"
 )
 

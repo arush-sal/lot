@@ -26,7 +26,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util"
 )
 
 type lessFunc func(p1, p2 *Process) bool

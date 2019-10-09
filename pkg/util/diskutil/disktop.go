@@ -28,8 +28,8 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/util"
-	"github.com/arush-sal/lot/pkg/util/procutil"
+	"github.com/infracloudio/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util/procutil"
 )
 
 // ProcessIOStat represents the IO stats of a process
