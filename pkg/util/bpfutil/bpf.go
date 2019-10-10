@@ -28,7 +28,7 @@ import (
 	"strings"
 	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util"
 )
 
 // BPFSnippet represents a bpftrace snippet

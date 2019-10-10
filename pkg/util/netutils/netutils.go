@@ -27,8 +27,8 @@ import (
 	"os"
 	"text/tabwriter"
 
-	"github.com/arush-sal/lot/pkg/util/netutils/ip"
-	"github.com/arush-sal/lot/pkg/util/netutils/traceroute"
+	"github.com/infracloudio/lot/pkg/util/netutils/ip"
+	"github.com/infracloudio/lot/pkg/util/netutils/traceroute"
 )
 
 // Trace is an exported function that traces the given address

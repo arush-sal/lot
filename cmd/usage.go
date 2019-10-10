@@ -16,8 +16,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/arush-sal/lot/pkg/util"
-	"github.com/arush-sal/lot/pkg/util/diskutil"
+	"github.com/infracloudio/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util/diskutil"
 	"github.com/spf13/cobra"
 )
 

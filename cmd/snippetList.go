@@ -16,7 +16,7 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/arush-sal/lot/pkg/util/bpfutil"
+	"github.com/infracloudio/lot/pkg/util/bpfutil"
 	"github.com/spf13/cobra"
 )
 

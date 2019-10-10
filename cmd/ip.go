@@ -17,8 +17,8 @@ limitations under the License.
 package cmd
 
 import (
-	"github.com/arush-sal/lot/pkg/util/netutils"
-	"github.com/arush-sal/lot/pkg/util/netutils/ip"
+	"github.com/infracloudio/lot/pkg/util/netutils"
+	"github.com/infracloudio/lot/pkg/util/netutils/ip"
 	"github.com/spf13/cobra"
 )
 

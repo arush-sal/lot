@@ -8,9 +8,9 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/arush-sal/lot/pkg/util"
-	"github.com/arush-sal/lot/pkg/util/procutil"
-	"github.com/arush-sal/lot/pkg/util/sysutil"
+	"github.com/infracloudio/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util/procutil"
+	"github.com/infracloudio/lot/pkg/util/sysutil"
 	ui "github.com/gizak/termui/v3"
 	"github.com/gizak/termui/v3/widgets"
 	"github.com/shirou/gopsutil/cpu"

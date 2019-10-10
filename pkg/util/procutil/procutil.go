@@ -29,8 +29,8 @@ import (
 	"text/tabwriter"
 	"time"
 
-	"github.com/arush-sal/lot/pkg/util"
-	"github.com/arush-sal/lot/pkg/util/sysutil"
+	"github.com/infracloudio/lot/pkg/util"
+	"github.com/infracloudio/lot/pkg/util/sysutil"
 	gopsutil "github.com/shirou/gopsutil/process"
 
 	"golang.org/x/sys/unix"
