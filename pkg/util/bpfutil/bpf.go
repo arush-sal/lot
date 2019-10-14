@@ -150,10 +150,3 @@ func ExecuteSnippet(arg string) {
 
 	util.ErrorCheck(cmd.Run())
 }
-
-func init() {
-	_, err := exec.LookPath("bpftrace")
-	if err != nil {
-		fmt.Fprint(os.Stderr, "bpftrace not found", err)
-	}
-}
