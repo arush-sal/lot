@@ -20,6 +20,7 @@ package util
 
 import (
 	"fmt"
+	"math"
 	"os"
 	"os/exec"
 	"os/user"
@@ -54,14 +55,14 @@ func TransformSize(n uint64) string {
 	case n < 1024:
 		return strconv.FormatUint(n, 10) + "B"
 	case n < 1048576 && n > 1024:
-		n = n / 1024
-		return strconv.FormatUint(n, 10) + "KiB"
+		tmp := float64(n) / 1024
+		return strconv.FormatUint(uint64(math.Round(tmp)), 10) + "KiB"
 	case n < 1073741824:
-		n = n / 1048576
-		return strconv.FormatUint(n, 10) + "MiB"
+		tmp := float64(n) / 1048576
+		return strconv.FormatUint(uint64(math.Round(tmp)), 10) + "MiB"
 	default:
-		n = n / 1073741824
-		return strconv.FormatUint(n, 10) + "GiB"
+		tmp := float64(n) / 1073741824
+		return strconv.FormatUint(uint64(math.Round(tmp)), 10) + "GiB"
 	}
 }
 
