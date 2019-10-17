@@ -23,8 +23,8 @@ import (
 	"sort"
 	"strconv"
 
-	"github.com/infracloudio/lot/pkg/util"
 	"github.com/disiqueira/gotree"
+	"github.com/infracloudio/lot/pkg/util"
 )
 
 type process struct {
