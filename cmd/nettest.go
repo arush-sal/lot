@@ -13,24 +13,24 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package cmd
 
 import (
+	"github.com/infracloudio/lot/pkg/util/netutils/nettest"
 	"github.com/spf13/cobra"
 )
 
-// completionCmd represents the completion command
-var completionCmd = &cobra.Command{
-	Use:   "completion",
-	Short: "Provides the completion script for lot",
-	Long: `lot completion <command> provides the completion script for lot for a specified shell.
-Currently bash and zsh are supported`,
+// testCmd represents the ip command
+var testCmd = &cobra.Command{
+	Use:   "test",
+	Short: "Provides IP address for DNS name",
+	Long:  `lot network test <DNS name> provides the IPv4 and IPv6 addresses associated with that host name.`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		nettest.NetworkTest(args[0])
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(completionCmd)
-
+	networkCmd.AddCommand(testCmd)
 }

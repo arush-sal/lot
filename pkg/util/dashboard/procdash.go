@@ -8,11 +8,11 @@ import (
 	"strconv"
 	"strings"
 
+	ui "github.com/gizak/termui/v3"
+	"github.com/gizak/termui/v3/widgets"
 	"github.com/infracloudio/lot/pkg/util"
 	"github.com/infracloudio/lot/pkg/util/procutil"
 	"github.com/infracloudio/lot/pkg/util/sysutil"
-	ui "github.com/gizak/termui/v3"
-	"github.com/gizak/termui/v3/widgets"
 	"github.com/shirou/gopsutil/cpu"
 	"github.com/shirou/gopsutil/mem"
 )
