@@ -26,11 +26,12 @@ import (
 // snippetCmd represents the snippet command
 var snippetCmd = &cobra.Command{
 	Use:   "snippet",
-	Short: "",
-	Long:  ``,
+	Short: "Executes the provided bpftrace snippet",
+	Long:  `lot bpf snippet is a wrapper around bpftrace through which you can execute any bpftrace script or you can choose one from the list of provided scripts`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if args == nil {
-			cmd.Usage()
+		if len(args) == 0 {
+			fmt.Println("Missing bpftrace snippet")
+			fmt.Println("Use the list sub-command to get a list of out-of-box eBPF snippets")
 			os.Exit(0)
 		}
 
@@ -42,9 +43,10 @@ var snippetCmd = &cobra.Command{
 			}
 			bpfutil.ExecuteSnippet(args[0])
 		} else {
-			fmt.Printf("Missing bpftrace snippet\n\n")
-			bpfutil.ListSnippets()
-			os.Exit(0)
+			fmt.Println("Invalid number of arguments")
+			fmt.Println("Use lot bpf snippet --help for usage")
+			// Refer https://www.tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
+			os.Exit(126)
 		}
 
 	},

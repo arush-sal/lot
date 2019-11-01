@@ -31,7 +31,7 @@ import (
 	"github.com/infracloudio/lot/pkg/util"
 )
 
-// BPFSnippet represents a bpftrace snippet
+// BPFSnippet contains a bpftrace snippet along with its short description and example
 type BPFSnippet struct {
 	Desc    string
 	Snippet string
@@ -39,41 +39,41 @@ type BPFSnippet struct {
 }
 
 var snippetmap = map[string]*BPFSnippet{
-	"bashreadline":   &BPFSnippet{bashreadlineDesc, bashreadline, bashreadline_example},
-	"biolatency":     &BPFSnippet{biolatencyDesc, biolatency, biolatency_example},
-	"biosnoop":       &BPFSnippet{biosnoopDesc, biosnoop, biosnoop_example},
-	"biostacks":      &BPFSnippet{biostacksDesc, biostacks, biostacks_example},
-	"bitesize":       &BPFSnippet{bitesizeDesc, bitesize, bitesize_example},
-	"capable":        &BPFSnippet{capableDesc, capable, capable_example},
-	"cpuwalk":        &BPFSnippet{cpuwalkDesc, cpuwalk, cpuwalk_example},
-	"dcsnoop":        &BPFSnippet{dcsnoopDesc, dcsnoop, dcsnoop_example},
-	"execsnoop":      &BPFSnippet{execsnoopDesc, execsnoop, execsnoop_example},
-	"gethostlatency": &BPFSnippet{gethostlatencyDesc, gethostlatency, gethostlatency_example},
-	"killsnoop":      &BPFSnippet{killsnoopDesc, killsnoop, killsnoop_example},
-	"loads":          &BPFSnippet{loadsDesc, loads, loads_example},
-	"mdflush":        &BPFSnippet{mdflushDesc, mdflush, mdflush_example},
-	"naptime":        &BPFSnippet{naptimeDesc, naptime, naptime_example},
-	"oomkill":        &BPFSnippet{oomkillDesc, oomkill, oomkill_example},
-	"opensnoop":      &BPFSnippet{opensnoopDesc, opensnoop, opensnoop_example},
-	"pidpersec":      &BPFSnippet{pidpersecDesc, pidpersec, pidpersec_example},
-	"runqlat":        &BPFSnippet{runqlatDesc, runqlat, runqlat_example},
-	"runqlen":        &BPFSnippet{runqlenDesc, runqlen, runqlen_example},
-	"setuids":        &BPFSnippet{setuidsDesc, setuids, setuids_example},
-	"statsnoop":      &BPFSnippet{statsnoopDesc, statsnoop, statsnoop_example},
-	"swapin":         &BPFSnippet{swapinDesc, swapin, swapin_example},
-	"syncsnoop":      &BPFSnippet{syncsnoopDesc, syncsnoop, syncsnoop_example},
-	"syscount":       &BPFSnippet{syscountDesc, syscount, syscount_example},
-	"tcpaccept":      &BPFSnippet{tcpacceptDesc, tcpaccept, tcpaccept_example},
-	"tcpconnect":     &BPFSnippet{tcpconnectDesc, tcpconnect, tcpconnect_example},
-	"tcpdrop":        &BPFSnippet{tcpdropDesc, tcpdrop, tcpdrop_example},
-	"tcplife":        &BPFSnippet{tcplifeDesc, tcplife, tcplife_example},
-	"tcpretrans":     &BPFSnippet{tcpretransDesc, tcpretrans, tcpretrans_example},
-	"tcpsynbl":       &BPFSnippet{tcpsynblDesc, tcpsynbl, tcpsynbl_example},
-	"threadsnoop":    &BPFSnippet{threadsnoopDesc, threadsnoop, threadsnoop_example},
-	"vfscount":       &BPFSnippet{vfscountDesc, vfscount, vfscount_example},
-	"vfsstat":        &BPFSnippet{vfsstatDesc, vfsstat, vfsstat_example},
-	"writeback":      &BPFSnippet{writebackDesc, writeback, writeback_example},
-	"xfsdist":        &BPFSnippet{xfsdistDesc, xfsdist, xfsdist_example},
+	"bashreadline":   &BPFSnippet{bashreadlineDesc, bashreadline, bashreadlineExample},
+	"biolatency":     &BPFSnippet{biolatencyDesc, biolatency, biolatencyExample},
+	"biosnoop":       &BPFSnippet{biosnoopDesc, biosnoop, biosnoopExample},
+	"biostacks":      &BPFSnippet{biostacksDesc, biostacks, biostacksExample},
+	"bitesize":       &BPFSnippet{bitesizeDesc, bitesize, bitesizeExample},
+	"capable":        &BPFSnippet{capableDesc, capable, capableExample},
+	"cpuwalk":        &BPFSnippet{cpuwalkDesc, cpuwalk, cpuwalkExample},
+	"dcsnoop":        &BPFSnippet{dcsnoopDesc, dcsnoop, dcsnoopExample},
+	"execsnoop":      &BPFSnippet{execsnoopDesc, execsnoop, execsnoopExample},
+	"gethostlatency": &BPFSnippet{gethostlatencyDesc, gethostlatency, gethostlatencyExample},
+	"killsnoop":      &BPFSnippet{killsnoopDesc, killsnoop, killsnoopExample},
+	"loads":          &BPFSnippet{loadsDesc, loads, loadsExample},
+	"mdflush":        &BPFSnippet{mdflushDesc, mdflush, mdflushExample},
+	"naptime":        &BPFSnippet{naptimeDesc, naptime, naptimeExample},
+	"oomkill":        &BPFSnippet{oomkillDesc, oomkill, oomkillExample},
+	"opensnoop":      &BPFSnippet{opensnoopDesc, opensnoop, opensnoopExample},
+	"pidpersec":      &BPFSnippet{pidpersecDesc, pidpersec, pidpersecExample},
+	"runqlat":        &BPFSnippet{runqlatDesc, runqlat, runqlatExample},
+	"runqlen":        &BPFSnippet{runqlenDesc, runqlen, runqlenExample},
+	"setuids":        &BPFSnippet{setuidsDesc, setuids, setuidsExample},
+	"statsnoop":      &BPFSnippet{statsnoopDesc, statsnoop, statsnoopExample},
+	"swapin":         &BPFSnippet{swapinDesc, swapin, swapinExample},
+	"syncsnoop":      &BPFSnippet{syncsnoopDesc, syncsnoop, syncsnoopExample},
+	"syscount":       &BPFSnippet{syscountDesc, syscount, syscountExample},
+	"tcpaccept":      &BPFSnippet{tcpacceptDesc, tcpaccept, tcpacceptExample},
+	"tcpconnect":     &BPFSnippet{tcpconnectDesc, tcpconnect, tcpconnectExample},
+	"tcpdrop":        &BPFSnippet{tcpdropDesc, tcpdrop, tcpdropExample},
+	"tcplife":        &BPFSnippet{tcplifeDesc, tcplife, tcplifeExample},
+	"tcpretrans":     &BPFSnippet{tcpretransDesc, tcpretrans, tcpretransExample},
+	"tcpsynbl":       &BPFSnippet{tcpsynblDesc, tcpsynbl, tcpsynblExample},
+	"threadsnoop":    &BPFSnippet{threadsnoopDesc, threadsnoop, threadsnoopExample},
+	"vfscount":       &BPFSnippet{vfscountDesc, vfscount, vfscountExample},
+	"vfsstat":        &BPFSnippet{vfsstatDesc, vfsstat, vfsstatExample},
+	"writeback":      &BPFSnippet{writebackDesc, writeback, writebackExample},
+	"xfsdist":        &BPFSnippet{xfsdistDesc, xfsdist, xfsdistExample},
 }
 
 // IsValidSnippet validates wheter a given snippetname is valid or not
@@ -139,6 +139,7 @@ func createSnippetFile(arg string) *os.File {
 	return tmpFile
 }
 
+// ExecuteSnippet executes the provided bpftrace snippet
 func ExecuteSnippet(arg string) {
 	var cmd *exec.Cmd
 	btpath, err := exec.LookPath("bpftrace")
@@ -149,4 +150,9 @@ func ExecuteSnippet(arg string) {
 	cmd.Args = append(cmd.Args, btpath, file.Name())
 
 	util.ErrorCheck(cmd.Run())
+}
+
+// ExplainSnippet prints the example and long description of the provided bpftrace snippet
+func ExplainSnippet(arg string) {
+	fmt.Println(snippetmap[arg].Example)
 }

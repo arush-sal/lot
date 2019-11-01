@@ -13,20 +13,25 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
+
 package cmd
 
 import (
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
 // bpfCmd represents the bpf command
 var bpfCmd = &cobra.Command{
-	Use:     "bpf",
-	Aliases: []string{"godmode", "bankai", "hokage", "kaizokuou"},
-	Short:   "",
-	Long:    ``,
+	Use:   "bpf",
+	Short: "Command related to eBPF operations",
+	Long:  `lot bpf provides a bunch of sub-commands that individually provided various eBPF related features`,
 	Run: func(cmd *cobra.Command, args []string) {
-
+		if len(args) == 0 {
+			cmd.Usage()
+			os.Exit(0)
+		}
 	},
 }
 

@@ -23,23 +23,35 @@ import (
 	"github.com/spf13/cobra"
 )
 
-// listCmd represents the list command
-var slistCmd = &cobra.Command{
-	Use:   "list",
-	Short: "List all the out-of-box ready to use eBPF snippets",
-	Long:  `lot bpf snippet list will list all of the ready to use eBPF snippets provided out-of-box`,
+// explainCmd represents the explain command
+var explainCmd = &cobra.Command{
+	Use:   "explain",
+	Short: "Provides a detailed example and long descrption of the snippet provided",
+	Long:  `lot bpf snippet explain will provides a full detailed explaination along with its respective usage example as described by the original authors for the provided snippet`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if len(args) > 0 {
+		if len(args) == 0 {
+			fmt.Println("Missing bpftrace snippet")
+			fmt.Println("Use the list sub-command to get a list of out-of-box eBPF snippets")
+			os.Exit(0)
+		}
+
+		if len(args) == 1 {
+			if !bpfutil.IsValidSnippet(args[0]) {
+				fmt.Printf("Not a valid bpftrace snippet\n\n")
+				bpfutil.ListSnippets()
+				os.Exit(0)
+			}
+			bpfutil.ExplainSnippet(args[0])
+		} else {
 			fmt.Println("Invalid number of arguments")
-			fmt.Println("lot bpf snippet list does not take any argument")
+			fmt.Println("Use lot bpf snippet explain --help for usage")
 			// Refer https://www.tldp.org/LDP/abs/html/exitcodes.html#EXITCODESREF
 			os.Exit(126)
 		}
 
-		bpfutil.ListSnippets()
 	},
 }
 
 func init() {
-	snippetCmd.AddCommand(slistCmd)
+	snippetCmd.AddCommand(explainCmd)
 }
