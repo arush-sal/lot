@@ -1,21 +1,32 @@
 project_name: lot
+release:
+  github:
+    owner: infracloudio
+    name: lot
+  name_template: '{{.Tag}}'
 before:
-  hooks:
-  - go mod tidy
 builds:
 - id: lot
   binary: lot
   main: main.go
-  ldflags: &ldflags
-  - -s -w
+  ldflags: -s -w -extldflags -static
   env: &env
   - GO111MODULE=on
-  - CGO_ENABLED=0
-  - GO_EXTLINK_ENABLED=0
   goos:
   - linux
   goarch: &goarch
   - amd64
+
+archive:
+  format: tar.gz
+  name_template: '{{ .Binary }}_{{ .Version }}_{{ .Arch }}'
+  files:
+  - licence*
+  - LICENCE*
+  - readme*
+  - README*
+  - changelog*
+  - CHANGELOG*
 
 snapshot:
   name_template: '{{ .Tag }}'
@@ -27,4 +38,3 @@ changelog:
     exclude:
     - '^docs:'
     - '^test:'
-

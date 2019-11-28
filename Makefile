@@ -3,7 +3,9 @@ default: binary
 .PHONY: clean show-fmt fmt binary static-binary install release-test release
 
 BUILD_DIR := $(shell echo `pwd`/build)
-BUILD_FLAGS := -ldflags "-linkmode external -extldflags -static"
+# -w disable DWARF generation
+# -s disable symbol table
+BUILD_FLAGS := -ldflags "-s -w -extldflags -static"
 GO_ENVIRONMENT := GOBIN=$(BUILD_DIR) GOCACHE=$(BUILD_DIR)/.cache GOGC=200
 
 export GO111MODULE=on
@@ -18,9 +20,6 @@ install:
 	go install `go list -f '{{.Dir}}' `
 
 binary: 
-	$(GO_ENVIRONMENT) go build `go list -f '{{.Dir}}' `
-
-static-binary: 
 	$(GO_ENVIRONMENT) go build $(BUILD_FLAGS) `go list -f '{{.Dir}}' `
 
 vet:
