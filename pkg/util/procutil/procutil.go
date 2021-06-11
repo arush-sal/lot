@@ -96,11 +96,9 @@ type Stat struct {
 	/*(52) */ ExitCode int
 }
 
-var systemClockTick = sysutil.GetClockTick()
-
 // GetStat will return the stats for a given process
 func (p *Process) GetStat() (err error) {
-	var cl, sstat string
+	var sstat string
 	var nameStart, nameEnd int
 
 	stats, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "stat"))
@@ -122,19 +120,10 @@ func (p *Process) GetStat() (err error) {
 		return err
 	}
 
-	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "cmdline"))
-	if err != nil {
+	if err := p.GetCmdline(); err != nil {
 		return err
 	}
-	defer cmdline.Close()
-
-	cmdScanner := bufio.NewScanner(cmdline)
-	for cmdScanner.Scan() {
-		cl = cmdScanner.Text()
-	}
-
 	p.Name = sstat[nameStart : nameStart+nameEnd+1]
-	p.Cmdline = cl
 	p.Stat = *s
 
 	return nil
@@ -189,7 +178,7 @@ func GetProcessStats() ([]*Process, error) {
 		}
 		ps := &Process{Pid: pid}
 		err = ps.GetStat()
-		if err == err.(*os.PathError) {
+		if err != nil && err == err.(*os.PathError) {
 			ps.Name = "Ghost Process"
 			p[idx] = ps
 			continue
@@ -224,7 +213,7 @@ func ListProcess() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, psformat, p.User, p.Pid, p.Cpup, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.getTerminalName(), stat.State, processStartTime, p.Cput, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, psformat, p.User, p.Pid, p.Cpup, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.getTTYName(), stat.State, processStartTime, p.Cput, p.Cmdline)
 	}
 	tw.Flush()
 
@@ -277,6 +266,9 @@ func (p *Process) GetVMRss(s string) (err error) {
 // and gets the process's UID and VmRSS
 func (p *Process) GetStatus() (err error) {
 	statusf, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "status"))
+	if err != nil {
+		return err
+	}
 	defer statusf.Close()
 
 	scanner := bufio.NewScanner(statusf)
@@ -296,7 +288,7 @@ func (p *Process) GetStatus() (err error) {
 	return
 }
 
-func (p *Process) getTerminalName() (terminal string) {
+func (p *Process) getTTYName() (terminal string) {
 	t := uint64(p.Stat.TtyNr)
 	major := unix.Major(t)
 	minor := unix.Minor(t)
@@ -336,5 +328,21 @@ func (p *Process) ExternalStats() error {
 	p.Cput = t.Total()
 
 	p.Memp, err = proc.MemoryPercent()
+	return err
+}
+
+// GetCmdline reads the /proc/pid/cmdline file and returns the value
+func (p *Process) GetCmdline() (err error) {
+	cmdline, err := os.Open(util.CreateProcPath(util.ProcLocation, strconv.Itoa(p.Pid), "cmdline"))
+	if err != nil {
+		return err
+	}
+	defer cmdline.Close()
+
+	cmdScanner := bufio.NewScanner(cmdline)
+	for cmdScanner.Scan() {
+		p.Cmdline = cmdScanner.Text()
+	}
+
 	return err
 }

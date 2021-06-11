@@ -23,7 +23,6 @@ import (
 	"fmt"
 	"os"
 	"sort"
-	"strings"
 	"text/tabwriter"
 
 	"github.com/infracloudio/lot/pkg/util"
@@ -134,7 +133,7 @@ func MemTop() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, tformat, p.Memp, util.TransformSize(uint64(stat.Rss)), util.TransformSize(uint64(stat.Vsize)), p.Cpup, processStartTime, p.Cput, p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, tformat, p.Memp, util.TransformSize(uint64(stat.Rss)), util.TransformSize(uint64(stat.Vsize)), p.Cpup, processStartTime, p.Cput, p.Pid, p.User, p.getTTYName(), stat.State, p.Cmdline)
 	}
 	tw.Flush()
 
@@ -163,7 +162,7 @@ func CPUTop() error {
 		stat := p.Stat
 		processStartTime := startTime(stat.createTime())
 
-		fmt.Fprintf(tw, tformat, p.Cpup, p.Cput, processStartTime, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.Pid, p.User, p.getTerminalName(), stat.State, strings.Trim(p.Name, "()"))
+		fmt.Fprintf(tw, tformat, p.Cpup, p.Cput, processStartTime, p.Memp, util.TransformSize(uint64(stat.Vsize)), util.TransformSize(uint64(stat.Rss)), p.Pid, p.User, p.getTTYName(), stat.State, p.Cmdline)
 	}
 	tw.Flush()
 
